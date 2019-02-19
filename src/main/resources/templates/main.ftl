@@ -1,36 +1,41 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-    <title>SW</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-</head>
-<body style="background: darkgray">
-<form action="/logout" method="post">
-    <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-    <input type="submit" value="Sign Out"/>
-</form>
-<div>
-    <form method="post">
-        <input type="text" name="text" placeholder="Enter message"/>
-        <input type="text" name="tag" placeholder="Enter tag"/>
+<#import "parts/common.ftl" as c>
+
+<@c.page>
+    <form action="/logout" method="post">
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <button type="submit">Add</button>
+        <input type="submit" value="Sign Out"/>
     </form>
-</div>
-<div>
-    <form method="post" action="filter">
-        <input type="text" name="filter" placeholder="Enter filter for tag"/>
-        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <button type="submit">Find</button>
-    </form>
-</div>
-<div>Список сообщений</div>
-<#list messages as name>
+    <div><a href="/user">Users list</a></div>
     <div>
-        <b>${name.id}</b>
-        <span>${name.text}</span>
-        <i>${name.tag}</i>
+        <form method="post" enctype="multipart/form-data">
+            <input type="text" name="text" placeholder="Enter message.."/>
+            <input type="text" name="tag" placeholder="Enter tag.."/>
+            <input type="file" name="file">
+            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+            <button type="submit">Add</button>
+        </form>
     </div>
-</#list>
-</body>
-</html>
+    <div>
+        <form method="get" >
+            <input type="text" name="filter"
+                   placeholder="Enter filter for tag.." value="${filter!}"/>
+            <button type="submit">Find</button>
+        </form>
+    </div>
+    <div>Список сообщений</div>
+    <#list messages as message>
+        <div>
+            <b>${message.id}</b>
+            <span>${message.text}</span>
+            <i>${message.tag}</i>
+            <strong>${message.authorName}</strong>
+            <div>
+                <#if message.filename??>
+                    <img src="/img/${message.filename}" >
+                </#if>
+            </div>
+        </div>
+    <#else >
+        No messages
+    </#list>
+</@c.page>
